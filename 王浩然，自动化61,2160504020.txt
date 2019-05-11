@@ -1,0 +1,346 @@
+#include "stdafx.h"
+#include<iostream>
+#include<opencv2/core.hpp>
+#include<opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+using namespace cv;
+using namespace std;
+
+Mat canny_main(Mat in,double shole1,double shold2 )
+{
+	Mat out;
+	in.copyTo(out);
+	blur(out, out, Size(3, 3));
+	Canny(out, out, shole1, shold2);
+	return out;
+}
+void hough(Mat in,int throshole)
+{
+	vector<Vec2f> lines;
+	HoughLines(in, lines, 1, CV_PI / 180, throshole, 0, 0);
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		float rho = lines[i][0], theta = lines[i][1];
+		Point pt1, pt2;
+		double a = cos(theta), b = sin(theta);
+		double x0 = a * rho, y0 = b * rho;
+		pt1.x = cvRound(x0 + 1000 * (-b));
+		pt1.y = cvRound(y0 + 1000 * (a));
+		pt2.x = cvRound(x0 - 1000 * (-b));
+		pt2.y = cvRound(y0 - 1000 * (a));
+		line(in, pt1, pt2, Scalar(55, 100, 195), 1, LINE_AA);
+	}
+}
+
+Mat Lap(Mat in)
+{
+	Mat out;
+	in.copyTo(out);
+	GaussianBlur(out, out, Size(3, 3),0);
+	Laplacian(out, out, 0);
+	return out;
+}
+
+//Mat Trackar;
+//int throshole;
+//void onTrackar(int,void*)
+//{
+//
+//
+//	GaussianBlur(Trackar, Trackar, Size(3, 3), 0);
+//	Laplacian(Trackar, Trackar, CV_16S);
+//	vector<Vec2f> lines;
+//	HoughLines(Trackar, lines, 1, CV_PI / 180, throshole, 0, 0);
+//	for (size_t i = 0; i < lines.size(); i++)
+//	{
+//		float rho = lines[i][0], theta = lines[i][1];
+//		Point pt1, pt2;
+//		double a = cos(theta), b = sin(theta);
+//		double x0 = a * rho, y0 = b * rho;
+//		pt1.x = cvRound(x0 + 1000 * (-b));
+//		pt1.y = cvRound(y0 + 1000 * (a));
+//		pt2.x = cvRound(x0 - 1000 * (-b));
+//		pt2.y = cvRound(y0 - 1000 * (a));
+//		line(Trackar, pt1, pt2, Scalar(55, 100, 195), 1, LINE_AA);
+//	}
+//
+//	imshow("hough", Trackar);
+//}
+
+
+
+int main()
+{
+	Mat src,dst,test1,test2,test3,test4,test5,test6,outtest1, outtest2, outtest3, outtest4, outtest5, outtest6;
+	test1 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test1.tif", 0);
+	test2 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test2.png", 0);
+	test3 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test3.jpg", 0);
+	test4 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test4.bmp", 0);
+	test5 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test5.png", 0);
+	test6 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test6.jpg", 0);
+	outtest1 = canny_main(test1,150,100);
+	outtest2 = canny_main(test2, 150, 100);
+	outtest3 = canny_main(test3, 150, 100);
+	outtest4 = canny_main(test4, 150, 100);
+	outtest5 = canny_main(test5, 150, 100);
+	outtest6 = canny_main(test6, 150, 100);
+	imshow("outtest1", outtest1);
+	imshow("outtest2", outtest2);
+	imshow("outtest3", outtest3);
+	imshow("outtest4", outtest4);
+	imshow("outtest5", outtest5);
+	imshow("outtest6", outtest6);
+	waitKey();
+	return 0;
+}
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\progect2\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+#include "stdafx.h"
+#include<iostream>
+#include<opencv2/core.hpp>
+#include<opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+using namespace cv;
+using namespace std;
+
+Mat canny_main(Mat in,double shole1,double shold2 )
+{
+	Mat out;
+	in.copyTo(out);
+	blur(out, out, Size(3, 3));
+	Canny(out, out, shole1, shold2);
+	return out;
+}
+Mat hough(Mat in,int throshole)
+{
+	Mat out;
+	in.copyTo(out);
+	vector<Vec2f> lines;
+	HoughLines(in, lines, 1, CV_PI / 180, throshole, 0, 0);
+	cvtColor(in, out, CV_GRAY2BGR);
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		float rho = lines[i][0], theta = lines[i][1];
+		Point pt1, pt2;
+		double a = cos(theta), b = sin(theta);
+		double x0 = a * rho, y0 = b * rho;
+		pt1.x = cvRound(x0 + 1000 * (-b));
+		pt1.y = cvRound(y0 + 1000 * (a));
+		pt2.x = cvRound(x0 - 1000 * (-b));
+		pt2.y = cvRound(y0 - 1000 * (a));
+		line(out, pt1, pt2, Scalar(0, 0, 255), 1, LINE_AA);
+	}
+	return out;
+}
+
+Mat Lap(Mat in)
+{
+	Mat out;
+	in.copyTo(out);
+	GaussianBlur(out, out, Size(3, 3),0);
+	Laplacian(out, out, 0);
+	return out;
+}
+
+//Mat Trackar;
+//int throshole;
+//void onTrackar(int,void*)
+//{
+//
+//
+//	GaussianBlur(Trackar, Trackar, Size(3, 3), 0);
+//	Laplacian(Trackar, Trackar, CV_16S);
+//	vector<Vec2f> lines;
+//	HoughLines(Trackar, lines, 1, CV_PI / 180, throshole, 0, 0);
+//	for (size_t i = 0; i < lines.size(); i++)
+//	{
+//		float rho = lines[i][0], theta = lines[i][1];
+//		Point pt1, pt2;
+//		double a = cos(theta), b = sin(theta);
+//		double x0 = a * rho, y0 = b * rho;
+//		pt1.x = cvRound(x0 + 1000 * (-b));
+//		pt1.y = cvRound(y0 + 1000 * (a));
+//		pt2.x = cvRound(x0 - 1000 * (-b));
+//		pt2.y = cvRound(y0 - 1000 * (a));
+//		line(Trackar, pt1, pt2, Scalar(55, 100, 195), 1, LINE_AA);
+//	}
+//
+//	imshow("hough", Trackar);
+//}
+
+
+
+int main()
+{
+	Mat src,dst,test1,test2,test3,test4,test5,test6,outtest1, outtest2, outtest3, outtest4, outtest5, outtest6;
+	test1 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test1.tif", 0);
+	test2 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test2.png", 0);
+	test3 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test3.jpg", 0);
+	test4 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test4.bmp", 0);
+	test5 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test5.png", 0);
+	test6 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test6.jpg", 0);
+	src = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test6.jpg",0);
+	outtest1 = canny_main(test1,150,100);
+	outtest2 = canny_main(test2, 150, 100);
+	outtest3 = canny_main(test3, 150, 100);
+	outtest4 = canny_main(test4, 150, 100);
+	outtest5 = canny_main(test5, 150, 100);
+	outtest6 = canny_main(test6, 150, 100);
+	//outtest1 = Lap(test1);
+	//outtest2 = Lap(test2);
+	//outtest3 = Lap(test3);
+	//outtest4 = Lap(test4);
+	//outtest5 = Lap(test5);
+	//outtest6 = Lap(test6);
+	outtest1 = hough(outtest1, 150);
+	outtest2 = hough(outtest2, 150);
+	outtest3 = hough(outtest3, 150);
+	outtest4 = hough(outtest4, 150);
+	outtest5 = hough(outtest5, 150);
+	outtest6 = hough(outtest6, 150);
+	imshow("outtest1", outtest1);
+	imshow("outtest2", outtest2);
+	imshow("outtest3", outtest3);
+	imshow("outtest4", outtest4);
+	imshow("outtest5", outtest5);
+	imshow("outtest6", outtest6);
+	waitKey();
+	return 0;
+}
+
+//////////////////////////////////////////progect3///////////////////////////////////////////////
+#include "stdafx.h"
+#include<iostream>
+#include<opencv2/core.hpp>
+#include<opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+using namespace cv;
+using namespace std;
+
+Mat canny_main(Mat in,double shole1,double shold2 )
+{
+	Mat out;
+	in.copyTo(out);
+	blur(out, out, Size(3, 3));
+	Canny(out, out, shole1, shold2);
+	return out;
+}
+Mat hough(Mat in,int throshole)
+{
+	Mat out;
+	in.copyTo(out);
+	vector<Vec2f> lines;
+	HoughLines(in, lines, 1, CV_PI / 180, throshole, 0, 0);
+	cvtColor(in, out, CV_GRAY2BGR);
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		float rho = lines[i][0], theta = lines[i][1];
+		Point pt1, pt2;
+		double a = cos(theta), b = sin(theta);
+		double x0 = a * rho, y0 = b * rho;
+		pt1.x = cvRound(x0 + 1000 * (-b));
+		pt1.y = cvRound(y0 + 1000 * (a));
+		pt2.x = cvRound(x0 - 1000 * (-b));
+		pt2.y = cvRound(y0 - 1000 * (a));
+		line(out, pt1, pt2, Scalar(0, 0, 255), 1, LINE_AA);
+	}
+	return out;
+}
+
+Mat Lap(Mat in)
+{
+	Mat out;
+	in.copyTo(out);
+	GaussianBlur(out, out, Size(3, 3), 0, 0 );
+	Laplacian(out, out, 0, 3, 1, 0 );
+	return out;
+}
+
+
+Mat scatter(Mat in)
+{
+	Mat g_x, g_y;
+	Mat a_x, a_y, dst;
+	Sobel(in, g_x, CV_16S, 1, 0,3, 1, 1, BORDER_DEFAULT);
+	convertScaleAbs(g_x, a_x);
+	Sobel(in, g_y, CV_16S, 0, 1, 3,1, 1, BORDER_DEFAULT);
+	convertScaleAbs(g_y, a_y);
+	addWeighted(a_x, 0.5, a_y, 0.5, 0, dst);
+	return dst;
+}
+
+//Mat Trackar;
+//int throshole;
+//void onTrackar(int,void*)
+//{
+//
+//
+//	GaussianBlur(Trackar, Trackar, Size(3, 3), 0);
+//	Laplacian(Trackar, Trackar, CV_16S);
+//	vector<Vec2f> lines;
+//	HoughLines(Trackar, lines, 1, CV_PI / 180, throshole, 0, 0);
+//	for (size_t i = 0; i < lines.size(); i++)
+//	{
+//		float rho = lines[i][0], theta = lines[i][1];
+//		Point pt1, pt2;
+//		double a = cos(theta), b = sin(theta);
+//		double x0 = a * rho, y0 = b * rho;
+//		pt1.x = cvRound(x0 + 1000 * (-b));
+//		pt1.y = cvRound(y0 + 1000 * (a));
+//		pt2.x = cvRound(x0 - 1000 * (-b));
+//		pt2.y = cvRound(y0 - 1000 * (a));
+//		line(Trackar, pt1, pt2, Scalar(55, 100, 195), 1, LINE_AA);
+//	}
+//
+//	imshow("hough", Trackar);
+//}
+
+
+
+int main()
+{
+	Mat src,dst,test1,test2,test3,test4,test5,test6,outtest1, outtest2, outtest3, outtest4, outtest5, outtest6;
+	test1 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test1.tif", 0);
+	test2 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test2.png", 0);
+	test3 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test3.jpg", 0);
+	test4 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test4.bmp", 0);
+	test5 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test5.png", 0);
+	test6 = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test6.jpg", 0);
+	src = imread("G:\\图像视频处理\\作业-直线检测\\作业-直线检测\\test6.jpg",0);
+	outtest1 = canny_main(test1,150,100);
+	outtest2 = canny_main(test2, 150, 100);
+	outtest3 = canny_main(test3, 150, 100);
+	outtest4 = canny_main(test4, 150, 100);
+	outtest5 = canny_main(test5, 150, 100);
+	outtest6 = canny_main(test6, 150, 100);
+	//outtest1 = Lap(test1);
+	//outtest2 = Lap(test2);
+	//outtest3 = Lap(test3);
+	//outtest4 = Lap(test4);
+	//outtest5 = Lap(test5);
+	//outtest6 = Lap(test6);
+	//outtest1 = scatter(test1);
+	//outtest2 = scatter(test2);
+	//outtest3 = scatter(test3);
+	//outtest4 = scatter(test4);
+	//outtest5 = scatter(test5);
+	//outtest6 = scatter(test6);
+
+
+	outtest1 = hough(outtest1, 100);
+	outtest2 = hough(outtest2, 100);
+	outtest3 = hough(outtest3, 100);
+	outtest4 = hough(outtest4, 100);
+	outtest5 = hough(outtest5, 100);
+	outtest6 = hough(outtest6, 100);
+	imshow("outtest1", outtest1);
+	imshow("outtest2", outtest2);
+	imshow("outtest3", outtest3);
+	imshow("outtest4", outtest4);
+	imshow("outtest5", outtest5);
+	imshow("outtest6", outtest6);
+	waitKey();
+	return 0;
+}
